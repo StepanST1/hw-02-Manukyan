@@ -24,7 +24,14 @@
 
 ### Задание 1
 
-`Приведите ответ в свободной форме........`
+`Задание 1
+Установите Zabbix Server с веб-интерфейсом.
+
+Процесс выполнения
+Выполняя ДЗ, сверяйтесь с процессом отражённым в записи лекции.
+Установите PostgreSQL. Для установки достаточна та версия, что есть в системном репозитороии Debian 11.
+Пользуясь конфигуратором команд с официального сайта, составьте набор команд для установки последней версии Zabbix с поддержкой PostgreSQL и Apache.
+Выполните все необходимые команды для установки Zabbix Server и Zabbix Web Server.`
 
 1. `Заполните здесь этапы выполнения, если требуется ....`
 2. `Заполните здесь этапы выполнения, если требуется ....`
@@ -34,15 +41,30 @@
 6. 
 
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+# Установка PostgreSQL
+sudo apt-get update
+sudo apt-get install postgresql
+# Install Zabbix repository
+wget https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.4+debian12_all.deb
+dpkg -i zabbix-release_latest_7.4+debian12_all.deb
+
+# Install Zabbix server, frontend, agent
+apt install zabbix-server-pgsql zabbix-frontend-php php8.2-pgsql zabbix-apache-conf zabbix-sql-scripts zabbix-agent
+
+# Create initial database
+sudo -u postgres createuser --pwprompt zabbix
+sudo -u postgres createdb -O zabbix zabbix
+zcat /usr/share/zabbix/sql-scripts/postgresql/server.sql.gz | sudo -u zabbix psql zabbix
+
+# Configure the database for Zabbix server
+nano /etc/zabbix/zabbix_server.conf
+
+systemctl restart zabbix-server zabbix-agent apache2
+systemctl enable zabbix-server zabbix-agent apache2
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 1](ссылка на скриншот 1)`
+
+![Авторизации в админке.](img/Screenshot_1.png)
 
 
 ---
